@@ -1,0 +1,12 @@
+# Or ignore all .env files regardless of location
+.env
+.env.*
+.venv
+
+# Ignore the temporary cloning directory
+backend/cloned_repo/
+
+# Python specific ignores
+__pycache__/
+*.py[cod]
+backend/app/__pycache__/

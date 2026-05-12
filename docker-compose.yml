@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: synapse-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - backend_cloned_repo:/app/cloned_repo
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - synapse-network
+
+  frontend:
+    build:
+      context: ./synapse-frontend
+      dockerfile: Dockerfile
+    container_name: synapse-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./synapse-frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://backend:8000
+    command: npm run dev -- --host 0.0.0.0
+    networks:
+      - synapse-network
+    depends_on:
+      - backend
+
+volumes:
+  backend_cloned_repo:
+
+networks:
+  synapse-network:
+    driver: bridge
